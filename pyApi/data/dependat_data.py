@@ -15,7 +15,7 @@ class DependatData:
         self.run_method = runmethod.RunMethod()
 
     # 从依赖接口的返回的数据中查找依赖的值并返回
-    def run_depend_value(self, row):
+    def run_depend_value(self, row, url_name):
         """
         如依赖所属的字段有值，则在返回值中先查找到所属字段的集合，再在该集合中查找依赖所需要的数据，
         如依赖所属的字段为空，则直接在返回值中查找依赖的值
@@ -31,7 +31,7 @@ class DependatData:
         else:
             depend_data = self.get_depen_data(row)                          # 依赖的值
             depend_belong = self.get_depend_belong(row)                     # 依赖所属的字段
-            request_data = self.depen_request(row)                          # 依赖接口返回的数据
+            request_data = self.depen_request(row, url_name)                          # 依赖接口返回的数据
             depend_request_data = json.loads(request_data)
             depend_request_context = depend_request_data.get('context')     # 取出context返回数据
             if depend_belong is '':
@@ -54,7 +54,7 @@ class DependatData:
                 return da
 
     # 执行依赖的case
-    def depen_request(self, row):
+    def depen_request(self, row, url_name):
         """
         1、根据依赖的行号获取对应的请求参数
         2、请求依赖的接口获取返回参数
@@ -64,7 +64,8 @@ class DependatData:
         """
         rows = self.get_depen_row_value(row)
         method = self.data.get_request_method(rows)
-        url = self.data.get_url(rows)
+        api = self.data.get_url(rows)
+        url = url_name + api
         data = self.data.get_data_json(rows)
         header = self.data.is_header(rows)
         re = self.run_method.run_main(method, url, data, header)

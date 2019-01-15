@@ -27,7 +27,7 @@ class RunTest:
                 api = self.data.get_url(i)
                 url = url_name + api
                 header = self.data.is_header(i)
-                depen_data = self.depen.run_depend_value(i)                     # 处理有依赖的接口数据
+                depen_data = self.depen.run_depend_value(i, url_name)                     # 处理有依赖的接口数据
                 if depen_data == None:
                     data = self.data.get_data_json(i)
                     re = self.run_method.run_main(method, url, data, header)    # 实际返回

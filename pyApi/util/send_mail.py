@@ -42,10 +42,10 @@ class SendEmail:
             content = "测试结果：\n" \
                       "本次共测试接口数：%s\n" \
                       "通过：%s\n" \
-                    "失败：%s\n" \
-                     "通过率：%s\n" \
-                    "失败率：%s" \
-                     % (count_num, pass_num, fail_num, pass_result, fail_result)
+                      "失败：%s\n" \
+                      "通过率：%s\n" \
+                      "失败率：%s" \
+                     % (int(count_num), int(pass_num), int(fail_num), pass_result, fail_result)
             self.send_email(self.user_list, sub, content)
 
 
