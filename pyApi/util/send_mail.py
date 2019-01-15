@@ -35,7 +35,6 @@ class SendEmail:
         fail_num = float(len(fail_count))
         count_num = pass_num + fail_num
         if count_num > 0:
-            print(pass_count, count_num)
             pass_result = "%.2f%%" %(pass_num / count_num * 100)
             fail_result = "%.2f%%" %(fail_num / count_num * 100)
             sub = "接口测试执行结果！"
