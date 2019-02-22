@@ -9,13 +9,16 @@ class OpenJson:
 
     # 读取json
     def operation_json(self):
-        with open("../test_file/data.json") as fp:
+        with open("../test_file/data.json", 'r', encoding='utf-8') as fp:
             data = json.load(fp)
             return data
 
     # 根据关键字获取数据
     def get_data(self, ids):
-        return self.data[ids]
+        if ids == None:
+            return None
+        else:
+            return self.data[ids]
 
 
 # if __name__ == '__main__':

@@ -21,32 +21,39 @@ class RunTest:
         notrun_count = []
         row_count = self.data.get_case_lines()
         for i in range(1, row_count):
+            yw, re = None, None
             is_run = self.data.get_is_run(i)
             if is_run:                                  # 判断是否执行
                 method = self.data.get_request_method(i)
                 api = self.data.get_url(i)
                 url = url_name + api
                 header = self.data.is_header(i)
-                depen_data = self.depen.run_depend_value(i, url_name)                     # 处理有依赖的接口数据
+                depen_data = self.depen.run_depend_value(i, url_name)               # 处理有依赖的接口数据
                 if depen_data == None:
                     data = self.data.get_data_json(i)
-                    re = self.run_method.run_main(method, url, data, header)    # 实际返回
+                    if data == None:
+                        not_re_data = ("第%s行的请求数据为空！" % i)
+                    else:        
+                        re = self.run_method.run_main(method, url, data, header)    # 实际返回
                 else:
                     re = self.run_method.run_main(method, url, depen_data, header)  # 实际返回
                 expcet_data = self.data.get_expcet_data(i)                          # 预期结果
-                yq = self.expcet.is_contain(expcet_data, re)                        # 判断返回结果和预期结果是否一致
-                if yq:
-                    self.data.write_data(i, 'pass%s' % re)
-                    pass_count.append(i)
-                    print('第%s条用例: 测试通过!' % i, re)
+                if re == None:
+                    print('Test-%s:' % i, not_re_data)
                 else:
-                    self.data.write_data(i, 'fail%s' % re)
-                    fail_count.append(i)
-                    print('第%s条用例: 测试失败!' % i, re)
+                    yq = self.expcet.is_contain(expcet_data, re)                    # 判断返回结果和预期结果是否一致
+                    if yq:
+                        self.data.write_data(i, 'pass%s' % re)
+                        pass_count.append(i)
+                        print('Test-%s: Pass!' % i, re)
+                    else:
+                        self.data.write_data(i, 'fail%s' % re)
+                        fail_count.append(i)
+                        print('Test-%s: Fail!' % i, re)
             else:
-                print('第%s条用例未执行！' % i)
+                print('Test-%s:Not running！' % i)
                 notrun_count.append(i)
-        self.sendemail.send_main(pass_count, fail_count)
+        # self.sendemail.send_main(pass_count, fail_count)                         # 发送邮件
         print('执行通过：', len(pass_count))
         print('执行失败：', len(fail_count))
         print('未执行：', len(notrun_count))
