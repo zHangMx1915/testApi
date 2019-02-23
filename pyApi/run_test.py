@@ -14,14 +14,14 @@ class RunTest:
         self.expcet = CommonUtil()           # 预期结果
         self.depen = DependatData()
         self.sendemail = SendEmail()
+        self.pass_count = []
+        self.fail_count = []
+        self.notrun_count = []
 
     def go_on_run(self, url_name):
-        pass_count = []
-        fail_count = []
-        notrun_count = []
         row_count = self.data.get_case_lines()
         for i in range(1, row_count):
-            yw, re = None, None
+            not_re_data, yw, re = None, None, None
             is_run = self.data.get_is_run(i)
             if is_run:                                  # 判断是否执行
                 method = self.data.get_request_method(i)
@@ -38,25 +38,30 @@ class RunTest:
                 else:
                     re = self.run_method.run_main(method, url, depen_data, header)  # 实际返回
                 expcet_data = self.data.get_expcet_data(i)                          # 预期结果
-                if re == None:
-                    print('Test-%s:' % i, not_re_data)
-                else:
-                    yq = self.expcet.is_contain(expcet_data, re)                    # 判断返回结果和预期结果是否一致
-                    if yq:
-                        self.data.write_data(i, 'pass%s' % re)
-                        pass_count.append(i)
-                        print('Test-%s: Pass!' % i, re)
-                    else:
-                        self.data.write_data(i, 'fail%s' % re)
-                        fail_count.append(i)
-                        print('Test-%s: Fail!' % i, re)
+                if re != None:
+                    yq = self.expcet.is_contain(expcet_data, re)
+                self.check(yq, expcet_data, re, i, not_re_data)
             else:
                 print('Test-%s:Not running！' % i)
-                notrun_count.append(i)
+                self.notrun_count.append(i)
         # self.sendemail.send_main(pass_count, fail_count)                         # 发送邮件
-        print('执行通过：', len(pass_count))
-        print('执行失败：', len(fail_count))
-        print('未执行：', len(notrun_count))
+        print('执行通过：', len(self.pass_count))
+        print('执行失败：', len(self.fail_count))
+        print('未执行：', len(self.notrun_count))
+
+    def check(self, yq, expcet_data, re, i, not_re_data):
+        if re == None:
+            self.notrun_count.append(i)
+            print('Test-%s:' % i, not_re_data)
+        else:
+            if yq:
+                self.data.write_data(i, 'pass%s' % re)
+                self.pass_count.append(i)
+                print('Test-%s: Pass!' % i, re)
+            else:
+                self.data.write_data(i, 'fail%s' % re)
+                self.fail_count.append(i)
+                print('Test-%s: Fail!' % i, re)
 
 
 if __name__ == '__main__':
