@@ -31,7 +31,7 @@ class DependatData:
         else:
             depend_data = self.get_depen_data(row)                          # 依赖的值
             depend_belong = self.get_depend_belong(row)                     # 依赖所属的字段
-            request_data = self.depen_request(row, url_name)                          # 依赖接口返回的数据
+            request_data = self.depen_request(row, url_name)                # 依赖接口返回的数据
             depend_request_data = json.loads(request_data)
             depend_request_context = depend_request_data.get('context')     # 取出context返回数据
             if depend_belong is '':

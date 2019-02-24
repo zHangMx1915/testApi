@@ -1,5 +1,5 @@
 # coding=utf-8
-
+import json
 import xlrd
 from xlutils.copy import copy
 
@@ -32,9 +32,9 @@ class OperationExcel:
     def get_cell_value(self, row, col):
         return self.data.cell_value(row, col)
 
-    # 写入Excel数据
+    # 返回数据写入Excel实际结果
     def write_value(self, row, col, value):
-        read_data = xlrd.open_workbook(self.file_name)
+        read_data = xlrd.open_workbook(self.file_name, formatting_info=True)    # formatting_info=True:保持表格的单元格格式
         write_data = copy(read_data)
         sheet_data = write_data.get_sheet(0)
         sheet_data.write(row, col, value)
