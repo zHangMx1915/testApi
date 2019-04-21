@@ -48,7 +48,7 @@ class RunTest:
                 not_run_log = ('Test-%s:Not running！' % i)
                 self.log_file.mylog(not_run_log, file_name)
                 self.notrun_count.append(i)
-        # self.sendemail.send_main(pass_count, fail_count)                         # 发送邮件
+        self.sendemail.send_main(len(self.pass_count), len(self.fail_count))                         # 发送邮件
         run_final = "\n执行通过： %d\n" \
                     "执行失败： %d\n" \
                     "未执行： %d" % (len(self.pass_count), len(self.fail_count), len(self.notrun_count))
@@ -56,6 +56,7 @@ class RunTest:
         print(run_final)
 
     def check(self, yq, re, i, not_re_data, file_name):
+        print(re)
         if re is None:
             self.notrun_count.append(i)
             not_re_data_log = ('Test-%s:' % i, not_re_data)

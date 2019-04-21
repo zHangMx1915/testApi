@@ -31,8 +31,7 @@ class SendEmail:
 
     # 计算通过率
     def send_main(self, pass_count, fail_count):
-        pass_num = float(len(pass_count))
-        fail_num = float(len(fail_count))
+        pass_num, fail_num = pass_count, fail_count
         count_num = pass_num + fail_num
         if count_num > 0:
             pass_result = "%.2f%%" %(pass_num / count_num * 100)
