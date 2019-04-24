@@ -17,7 +17,8 @@ class SendEmail:
 
     # 发送邮件
     def send_email(self, user_list, sub, content):
-        email_host = 'smtp.163.com'
+        # email_host = 'smtp.qq.com'
+        email_host = 'smtp.' + self.send_users.split('@')[-1]       # 解析邮箱地址得到邮件服务器地址
         user = 'zhangXin' + '<' + self.send_users + '>'
         message = MIMEText(content, _subtype='plain', _charset='utf-8')
         message['Subject'] = sub
