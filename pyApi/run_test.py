@@ -56,7 +56,7 @@ class RunTest:
         print(run_final)
 
     def check(self, yq, re, i, not_re_data, file_name):
-        print(re)
+        # print(re)
         if re is None:
             self.notrun_count.append(i)
             not_re_data_log = ('Test-%s:' % i, not_re_data)

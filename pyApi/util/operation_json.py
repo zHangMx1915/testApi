@@ -14,7 +14,7 @@ class OpenJson:
             return data
 
     # 根据关键字获取数据
-    def get_data(self, ids):
+    def get_data(self, ids, row):
         """
         请求参数直接写在用例表格中时，写在{}中，判断如字符首尾为{}时，
         将建字符串转换为dict格式后直接返回，否则再去json文件中读取参数
@@ -25,8 +25,11 @@ class OpenJson:
             if ids.startswith('{') and ids.endswith('}'):   # 判断是否以{}开头和结尾
                 return eval(ids)                            # 将str转换为dict格式
             else:
-                return self.data[ids]
-
+                try:
+                    return self.data[ids]
+                except:
+                    # print(ids, type(ids))
+                    print('Error！ 在第%s行,请检查请求参数！ 你是这样写的：%s' % (row, ids))
 
 # if __name__ == '__main__':
 #     op = OpenJson()

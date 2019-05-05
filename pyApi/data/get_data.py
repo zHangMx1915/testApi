@@ -71,7 +71,7 @@ class GetData:
     # 通过获取关键字拿到data数据
     def get_data_json(self, row):
         oper = operation_json.OpenJson()
-        return oper.get_data(self.get_request_data(row))
+        return oper.get_data(self.get_request_data(row), row)
 
     # 获取预期结果
     def get_expcet_data(self, row):

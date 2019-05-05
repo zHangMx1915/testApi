@@ -1,6 +1,7 @@
 # coding=utf-8
 import time
 
+
 class Log:
 
     # 创建log文件
