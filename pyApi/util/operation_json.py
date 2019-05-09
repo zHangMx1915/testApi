@@ -28,7 +28,6 @@ class OpenJson:
                 try:
                     return self.data[ids]
                 except:
-                    # print(ids, type(ids))
                     print('Error！ 在第%s行,请检查请求参数！ 你是这样写的：%s' % (row, ids))
 
 # if __name__ == '__main__':

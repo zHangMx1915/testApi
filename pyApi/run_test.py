@@ -6,6 +6,7 @@ from util.send_mail import SendEmail
 from data.dependat_data import DependatData
 from util.log import Log
 import json
+import threading
 
 
 class RunTest:
@@ -67,20 +68,62 @@ class RunTest:
                 self.pass_count.append(i)
                 pass_log = 'Test-%s: pass -->> ' % i + re
                 self.log_file.mylog(pass_log, file_name)
+                print('Test-%s:  -->> pass' % i)
 
             else:
                 self.data.write_data(i, 'fail -->> %s' % re)
                 self.fail_count.append(i)
                 fail_log = 'Test-%s: fail -->> ' % i + re
                 self.log_file.mylog(fail_log, file_name)
+                print('Test-%s:  -->> fail' % i)
+
+
+# if __name__ == '__main__':
+#     with open("../test_file/data_config.json") as fp:
+#             data_cnf = json.load(fp)
+#     url_names = data_cnf['url_test1']
+#     url = data_cnf['url']
+#     log = Log()
+#     file_names = log.logfile()
+#     run = RunTest()
+#     run.go_on_run(url_names, file_names)
+
+
+def my_run():
+    log_path = "../test_file/log_file/"
+    threadLock.acquire()                # 获取锁，用于线程同步
+    with open("../test_file/data_config.json") as fp:
+        data_cnf = json.load(fp)
+    url_names = data_cnf['url_test1']
+    url = data_cnf['url']
+    log = Log()
+    file_names = log.logfile(log_path)
+    run = RunTest()
+    run.go_on_run(url_names, file_names)
+    threadLock.release()                # 释放锁，开启下一个线程
+
+
+def my_run1():
+    log_path = "../test_file/log_file/"
+    threadLock.acquire()                # 获取锁，用于线程同步
+    with open("../test_file/data_config.json") as fp:
+        data_cnf = json.load(fp)
+    url_names = data_cnf['url_test1']
+    url = data_cnf['url']
+    log = Log()
+    file_names = log.logfile(log_path)
+    run = RunTest()
+    run.go_on_run(url_names, file_names)
+    threadLock.release()                # 释放锁，开启下一个线程
+
+
+threadLock = threading.Lock()           # 多线程资源锁
 
 
 if __name__ == '__main__':
-    with open("../test_file/data_config.json") as fp:
-            data_cnf = json.load(fp)
-    url_names = data_cnf['url_test']
-    url = data_cnf['url']
-    log = Log()
-    file_names = log.logfile()
-    run = RunTest()
-    run.go_on_run(url_names, file_names)
+    t1 = threading.Thread(target=my_run)
+    t2 = threading.Thread(target=my_run1)
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()

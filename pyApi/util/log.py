@@ -5,9 +5,9 @@ import time
 class Log:
 
     # 创建log文件
-    def logfile(self):
+    def logfile(self, log_path):
         test_time = (time.strftime("%Y.%m.%d %H-%M", time.localtime()))
-        file_name = ("../test_file/log_file/" + test_time + ".txt")
+        file_name = (log_path + test_time + ".txt")
         open(file_name, "a", encoding='utf-8')                                   # 创建log的txt文件
         return file_name
 
