@@ -7,21 +7,43 @@ import json
 class RunMethod:
 
     def post_main(self, url, data, header=None):
+        # requests.packages.urllib3.disable_warnings()  # 禁用HTTPS证书警告
         if header is None:
-            return requests.post(url=url, data=data).json()
+            return requests.post(url=url, data=data, verify=False).json()
         else:
-            return requests.post(url=url, data=data, headers=header).json()
+            return requests.post(url=url, data=data, headers=header, verify=False).json()   # verify=False 忽略https
 
     def get_mian(self, url, data=None, header=None):
         if header is None:
             a = requests.get(url, data).json()
             return a
         else:
-            return requests.get(url, data, headers=header).json()
+            return requests.get(url, data, headers=header, verify=False).json()
 
     def run_main(self, method, url, data=None, header=None):
-        if method == 'post':
-            re = self.post_main(url, data, header)
-        else:
-            re = self.get_mian(url, data, header)
-        return json.dumps(re, ensure_ascii=False, sort_keys=True, indent=2)
+        # if method == 'post':
+        #     re = self.post_main(url, data, header)
+        # else:
+        #     re = self.get_mian(url, data, header)
+        # sre =  json.dumps(re, ensure_ascii=False, sort_keys=True, indent=2)
+
+        sre = ''
+        try:  
+            if method == 'post':
+                re = self.post_main(url, data, header)
+            else:
+                re = self.get_mian(url, data, header)
+            sre =  json.dumps(re, ensure_ascii=False, sort_keys=True, indent=2)
+        # except json.decoder.JSONDecodeError as e:
+        #     sre = e
+        except Exception as e:
+            sre = e
+        return sre
+
+
+# if __name__ == '__main__':
+#     method = 'get'
+#     url = 'www.baidu,com'
+
+#     a = RunMethod()
+#     a.run_main(method, url)

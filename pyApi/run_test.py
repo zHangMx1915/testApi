@@ -22,6 +22,20 @@ class RunTest:
         self.fail_count = []
         self.notrun_count = []
 
+    def log_and_notrun(self, log_type, i, re, file_name):
+        log_text = ''
+        if log_type == 'pass':          
+            self.pass_count.append(i)
+            log_text = 'pass -->> ' + re
+        elif log_type == 'fail' or log_type == 'Error':
+            self.fail_count.append(i)
+            log_text = 'fail -->> ' + re
+        elif log_type == 'notrun':
+            self.notrun_count.append(i)
+            log_text = 'Not running！'
+        self.log_file.mylog('Test-%s: ' % i + log_text, file_name)
+        self.data.write_data(i, log_text)
+
     def go_on_run(self, url_name, file_name):
         row_count = self.data.get_case_lines()
         for i in range(1, row_count):
@@ -43,12 +57,14 @@ class RunTest:
                     re = self.run_method.run_main(method, urls, depen_data, header)  # 有依赖的实际返回
                 expcet_data = self.data.get_expcet_data(i)                          # 预期结果
                 if re is not None:
-                    yq = self.expcet.is_contain(expcet_data, re)
-                    self.check(yq, re, i, not_re_data, file_name)
+                    if type(re).__name__ == 'str':   # 判断是否为字典
+                        yq = self.expcet.is_contain(expcet_data, re)
+                        self.check(yq, re, i, not_re_data, file_name)
+                    else:
+                        re = str(re)
+                        self.log_and_notrun('Error', i, re, file_name)
             else:
-                not_run_log = ('Test-%s:Not running！' % i)
-                self.log_file.mylog(not_run_log, file_name)
-                self.notrun_count.append(i)
+                self.log_and_notrun('notrun', i, re, file_name)
         self.sendemail.send_main(len(self.pass_count), len(self.fail_count))                         # 发送邮件
         run_final = "\n执行通过： %d\n" \
                     "执行失败： %d\n" \
@@ -64,17 +80,10 @@ class RunTest:
             self.log_file.mylog(not_re_data_log, file_name)
         else:
             if yq:
-                self.data.write_data(i, 'pass -->> %s' % re)
-                self.pass_count.append(i)
-                pass_log = 'Test-%s: pass -->> ' % i + re
-                self.log_file.mylog(pass_log, file_name)
+                self.log_and_notrun('pass', i, re, file_name)
                 print('Test-%s:  -->> pass' % i)
-
             else:
-                self.data.write_data(i, 'fail -->> %s' % re)
-                self.fail_count.append(i)
-                fail_log = 'Test-%s: fail -->> ' % i + re
-                self.log_file.mylog(fail_log, file_name)
+                self.log_and_notrun('fail', i, re, file_name)
                 print('Test-%s:  -->> fail' % i)
 
 
@@ -94,8 +103,8 @@ def my_run():
     threadLock.acquire()                # 获取锁，用于线程同步
     with open("../test_file/data_config.json") as fp:
         data_cnf = json.load(fp)
-    url_names = data_cnf['url_test1']
-    url = data_cnf['url']
+    url_names = data_cnf['url_test']
+    # url = data_cnf['url']
     log = Log()
     file_names = log.logfile(log_path)
     run = RunTest()
@@ -108,8 +117,8 @@ def my_run1():
     threadLock.acquire()                # 获取锁，用于线程同步
     with open("../test_file/data_config.json") as fp:
         data_cnf = json.load(fp)
-    url_names = data_cnf['url_test1']
-    url = data_cnf['url']
+    url_names = data_cnf['url_test']
+    # url = data_cnf['url']
     log = Log()
     file_names = log.logfile(log_path)
     run = RunTest()

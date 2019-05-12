@@ -15,7 +15,7 @@ class CommonUtil:
         :return: 接口返回数据中包含预期数据，返回True，否则返回False
         """
         mx = None
-        dicts = json.loads(re)
+        dicts = json.loads(re, strict=False)
         context = dicts.get('context')
         str_expcet = self.change_type(expcet)
         if expcet is None:
