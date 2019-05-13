@@ -62,12 +62,11 @@ class RunTest:
                         yq = self.expcet.is_contain(expcet_data, re)
                         self.check(yq, re, i, not_re_data, file_name)
                     else:
-                        # re = str(re)
                         self.log_and_notrun('Error', i, re, file_name)
                         print('Test-%s:  -->> fail  ' % i + re)
             else:
                 self.log_and_notrun('notrun', i, re, file_name)
-        # self.sendemail.send_main(len(self.pass_count), len(self.fail_count))                         # 发送邮件
+        self.sendemail.send_main(len(self.pass_count), len(self.fail_count))                         # 发送邮件
         run_final = "\n执行通过： %d\n" \
                     "执行失败： %d\n" \
                     "未执行： %d" % (len(self.pass_count), len(self.fail_count), len(self.notrun_count))
@@ -75,38 +74,29 @@ class RunTest:
         print(run_final)
 
     def check(self, yq, re, i, not_re_data, file_name):
-        # print(re)
         if re is None:
             self.notrun_count.append(i)
             not_re_data_log = ('Test-%s:' % i, not_re_data)
             self.log_file.mylog(not_re_data_log, file_name)
         else:
-            if yq:
+            if yq == 1:
                 self.log_and_notrun('pass', i, re, file_name)
                 print('Test-%s:  -->> pass' % i)
-            else:
+            elif yq == 0:
                 self.log_and_notrun('fail', i, re, file_name)
                 print('Test-%s:  -->> fail' % i)
+            elif yq == 2:
+                re = "缺少预期结果！" + re
+                self.log_and_notrun('fail', i, re, file_name)
+                print('Test-%s:  -->> fail: 缺少预期结果！' % i)
 
 
-# if __name__ == '__main__':
-#     with open("../test_file/data_config.json") as fp:
-#             data_cnf = json.load(fp)
-#     url_names = data_cnf['url_test1']
-#     url = data_cnf['url']
-#     log = Log()
-#     file_names = log.logfile()
-#     run = RunTest()
-#     run.go_on_run(url_names, file_names)
-
-
-def my_run():
+def my_run(test_url):
     log_path = "../test_file/log_file/"
     threadLock.acquire()                # 获取锁，用于线程同步
     with open("../test_file/data_config.json") as fp:
         data_cnf = json.load(fp)
-    url_names = data_cnf['url_test1']
-    # url = data_cnf['url']
+    url_names = data_cnf[test_url]
     log = Log()
     file_names = log.logfile(log_path)
     run = RunTest()
@@ -114,26 +104,20 @@ def my_run():
     threadLock.release()                # 释放锁，开启下一个线程
 
 
-def my_run1():
-    log_path = "../test_file/log_file/"
-    threadLock.acquire()                # 获取锁，用于线程同步
-    with open("../test_file/data_config.json") as fp:
-        data_cnf = json.load(fp)
-    url_names = data_cnf['url_test1']
-    # url = data_cnf['url']
-    log = Log()
-    file_names = log.logfile(log_path)
-    run = RunTest()
-    run.go_on_run(url_names, file_names)
-    threadLock.release()                # 释放锁，开启下一个线程
+def case_0():
+    my_run('url_test')
+
+
+def case_1():
+    my_run('url_test')
 
 
 threadLock = threading.Lock()           # 多线程资源锁
 
 
 if __name__ == '__main__':
-    t1 = threading.Thread(target=my_run)
-    t2 = threading.Thread(target=my_run1)
+    t1 = threading.Thread(target=case_0)
+    t2 = threading.Thread(target=case_1)
     t1.start()
     t2.start()
     t1.join()

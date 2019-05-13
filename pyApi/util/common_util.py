@@ -7,34 +7,29 @@ import json
 
 class CommonUtil:
 
-    # 判断返回数据与预期结果是否一致
     def is_contain(self, expcet, re):
-        """
-        :param expcet: 预期结果中的数据
-        :param re: 实际返回的数据
-        :return: 接口返回数据中包含预期数据，返回True，否则返回False
-        """
-        mx = None
+        mx = ''
         dicts = json.loads(re, strict=False)
         context = dicts.get('context')
         str_expcet = self.change_type(expcet)
-        if expcet is None:
-            if dicts.get('status') == '200':
-                return True
+        message = dicts.get('message')
+        if expcet:
+            if str_expcet == message:
+                mx = 1
             else:
-                return False
+                mx = 0
+        elif expcet is None:
+            mx = 2
         else:
             if isinstance(context, dict):
                 for i in context.values():
-                    str_i = self.change_type(i)
-                    if str_expcet == str_i:
-                        return True
+                    if str_expcet == self.change_type(i):
+                        mx = 1
                     else:
-                        mx = False
+                        mx = 0
             elif isinstance(context, list):
-                return self.is_contain_list(context, expcet)
-
-            return mx
+                mx = self.is_contain_list(context, expcet)
+        return mx
 
     # 返回数据json中包含列表，遍历列表查看预期结果是否一致
     def is_contain_list(self, data, want):
@@ -50,9 +45,9 @@ class CommonUtil:
                 for j in i.values():    # 判断每个字典中是否包含预期结果
                     mxc = self.change_type(j)
                     if wants == mxc:
-                        return True
+                        mx = 1
                     else:
-                        mx = False
+                        mx = 0
         return mx
 
     # 将excel中读取的数据转换为str 类型
