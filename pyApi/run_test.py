@@ -57,15 +57,17 @@ class RunTest:
                     re = self.run_method.run_main(method, urls, depen_data, header)  # 有依赖的实际返回
                 expcet_data = self.data.get_expcet_data(i)                          # 预期结果
                 if re is not None:
-                    if type(re).__name__ == 'str':   # 判断是否为字典
+                    # if type(re).__name__ == 'str':   # 判断type
+                    if re.startswith('{') and re.endswith('}'):   # 判断是否以{}开头和结尾
                         yq = self.expcet.is_contain(expcet_data, re)
                         self.check(yq, re, i, not_re_data, file_name)
                     else:
-                        re = str(re)
+                        # re = str(re)
                         self.log_and_notrun('Error', i, re, file_name)
+                        print('Test-%s:  -->> fail  ' % i + re)
             else:
                 self.log_and_notrun('notrun', i, re, file_name)
-        self.sendemail.send_main(len(self.pass_count), len(self.fail_count))                         # 发送邮件
+        # self.sendemail.send_main(len(self.pass_count), len(self.fail_count))                         # 发送邮件
         run_final = "\n执行通过： %d\n" \
                     "执行失败： %d\n" \
                     "未执行： %d" % (len(self.pass_count), len(self.fail_count), len(self.notrun_count))
@@ -103,7 +105,7 @@ def my_run():
     threadLock.acquire()                # 获取锁，用于线程同步
     with open("../test_file/data_config.json") as fp:
         data_cnf = json.load(fp)
-    url_names = data_cnf['url_test']
+    url_names = data_cnf['url_test1']
     # url = data_cnf['url']
     log = Log()
     file_names = log.logfile(log_path)
@@ -117,7 +119,7 @@ def my_run1():
     threadLock.acquire()                # 获取锁，用于线程同步
     with open("../test_file/data_config.json") as fp:
         data_cnf = json.load(fp)
-    url_names = data_cnf['url_test']
+    url_names = data_cnf['url_test1']
     # url = data_cnf['url']
     log = Log()
     file_names = log.logfile(log_path)

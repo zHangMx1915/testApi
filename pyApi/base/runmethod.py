@@ -21,12 +21,6 @@ class RunMethod:
             return requests.get(url, data, headers=header, verify=False).json()
 
     def run_main(self, method, url, data=None, header=None):
-        # if method == 'post':
-        #     re = self.post_main(url, data, header)
-        # else:
-        #     re = self.get_mian(url, data, header)
-        # sre =  json.dumps(re, ensure_ascii=False, sort_keys=True, indent=2)
-
         sre = ''
         try:  
             if method == 'post':
@@ -34,8 +28,9 @@ class RunMethod:
             else:
                 re = self.get_mian(url, data, header)
             sre =  json.dumps(re, ensure_ascii=False, sort_keys=True, indent=2)
-        # except json.decoder.JSONDecodeError as e:
-        #     sre = e
+        except json.decoder.JSONDecodeError as e:
+            e = str(e)
+            sre = '请检查接口URL及路径！' + 'json.decoder.JSONDecodeError:' + e
         except Exception as e:
             sre = e
         return sre
