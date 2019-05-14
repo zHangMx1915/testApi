@@ -105,18 +105,18 @@ def my_run(test_url):
 
 
 def case_0():
-    my_run('url_test')
+    my_run('url_test1')
 
 
 def case_1():
-    my_run('url_test')
+    my_run('url_test1')
 
 
 threadLock = threading.Lock()           # 多线程资源锁
 
 
 if __name__ == '__main__':
-    t1 = threading.Thread(target=case_0)
+    t1 = threading.Thread(target=case_0) 
     t2 = threading.Thread(target=case_1)
     t1.start()
     t2.start()
